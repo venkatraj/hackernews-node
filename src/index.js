@@ -27,6 +27,29 @@ const resolvers = {
       links.push(link);
       return link;
     },
+    updateLink: (parent, args) => {
+      const { id, description, url } = args;
+      const linkIndex = links.findIndex((link) => link.id === id);
+      if (linkIndex === -1) {
+        throw new Error('Link does not exists');
+      }
+      if (description) {
+        links[linkIndex].description = description;
+      }
+      if (url) {
+        links[linkIndex].url = url;
+      }
+      return links[linkIndex];
+    },
+    deleteLink: (parent, args) => {
+      const { id } = args;
+      const linkIndex = links.findIndex((link) => link.id === id);
+      if (linkIndex === -1) {
+        throw new Error('Link does not exists');
+      }
+
+      return links.splice(linkIndex, 1)[0];
+    },
   },
 };
 
