@@ -2,11 +2,13 @@ const { GraphQLServer } = require('graphql-yoga');
 
 const links = [
   {
-    id: 'link-1',
+    id: 'link-0',
     description: 'Full stack tutorial for graphql',
     url: 'https://howtographql.com',
   },
 ];
+
+let idCount = links.length;
 
 const resolvers = {
   Query: {
@@ -22,6 +24,8 @@ const resolvers = {
         description: args.description,
         url: args.url,
       };
+      links.push(link);
+      return link;
     },
   },
 };
