@@ -3,6 +3,7 @@ type Query {
   feed: [Link!]!
   link(id: ID!): Link!
   users: [User!]!
+  votes: [Vote!]!
 }
 
 type Mutation {
@@ -11,10 +12,12 @@ type Mutation {
   deleteLink(id: ID!): Link!
   signup(email: String!, password: String!, name: String!): AuthPayLoad
   login(email: String!, password: String!): AuthPayLoad
+  vote(linkId: ID!): Vote!
 }
 
 type Subscription {
   newLink: Link
+  newVote: Vote
 }
 
 type Link {
@@ -22,6 +25,7 @@ type Link {
   description: String!
   url: String!
   postedBy: User!
+  votes: [Vote!]!
 }
 
 type User {
@@ -35,4 +39,10 @@ type User {
 type AuthPayLoad {
   token: String
   user: User
+}
+
+type Vote {
+  id: ID!
+  link: Link!
+  user: User!
 }
