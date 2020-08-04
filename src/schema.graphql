@@ -2,16 +2,37 @@ type Query {
   info: String!
   feed: [Link!]!
   link(id: ID!): Link!
+  users: [User!]!
 }
 
 type Mutation {
   post(description: String!, url: String!): Link!
   updateLink(id: ID!, description: String, url: String): Link!
   deleteLink(id: ID!): Link!
+  signup(email: String!, password: String!, name: String!): AuthPayLoad
+  login(email: String!, password: String!): AuthPayLoad
+}
+
+type Subscription {
+  newLink: Link
 }
 
 type Link {
   id: ID!
   description: String!
   url: String!
+  postedBy: User!
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  password: String!
+  links: [Link!]!
+}
+
+type AuthPayLoad {
+  token: String
+  user: User
 }

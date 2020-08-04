@@ -1,61 +1,32 @@
-const { GraphQLServer } = require('graphql-yoga');
+const { GraphQLServer, PubSub } = require('graphql-yoga');
+const { PrismaClient } = require('@prisma/client');
+const Query = require('./resolvers/Query');
+const Mutation = require('./resolvers/Mutation');
+const Subscription = require('./resolvers/Subscription');
+const Link = require('./resolvers/Link');
+const User = require('./resolvers/User');
 
-const links = [
-  {
-    id: 'link-0',
-    description: 'Full stack tutorial for graphql',
-    url: 'https://howtographql.com',
-  },
-];
-
-let idCount = links.length;
+const pubsub = new PubSub();
+const prisma = new PrismaClient();
 
 const resolvers = {
-  Query: {
-    info: () => {
-      return `This is API of hackernews clone`;
-    },
-    feed: () => links,
-  },
-  Mutation: {
-    post: (parent, args) => {
-      const link = {
-        id: `link-${idCount++}`,
-        description: args.description,
-        url: args.url,
-      };
-      links.push(link);
-      return link;
-    },
-    updateLink: (parent, args) => {
-      const { id, description, url } = args;
-      const linkIndex = links.findIndex((link) => link.id === id);
-      if (linkIndex === -1) {
-        throw new Error('Link does not exists');
-      }
-      if (description) {
-        links[linkIndex].description = description;
-      }
-      if (url) {
-        links[linkIndex].url = url;
-      }
-      return links[linkIndex];
-    },
-    deleteLink: (parent, args) => {
-      const { id } = args;
-      const linkIndex = links.findIndex((link) => link.id === id);
-      if (linkIndex === -1) {
-        throw new Error('Link does not exists');
-      }
-
-      return links.splice(linkIndex, 1)[0];
-    },
-  },
+  Query,
+  Mutation,
+  Subscription,
+  Link,
+  User,
 };
 
 const server = new GraphQLServer({
   typeDefs: './src/schema.graphql',
   resolvers,
+  context: (request) => {
+    return {
+      ...request,
+      pubsub,
+      prisma,
+    };
+  },
 });
 
 server.start(() => {
