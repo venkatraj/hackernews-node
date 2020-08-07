@@ -11,7 +11,11 @@ const Query = {
           ],
         }
       : {};
-    return await ctx.prisma.link.findMany({ where });
+    return await ctx.prisma.link.findMany({
+      where,
+      skip: args.skip,
+      take: args.take,
+    });
   },
   users: async (parent, args, ctx) => await ctx.prisma.user.findMany(),
   votes: async (parent, args, ctx) => await ctx.prisma.vote.findMany(),
